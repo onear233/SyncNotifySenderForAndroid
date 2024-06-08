@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">SyncNotifySender</string>
+    <string name="welcome">欢迎使用同步通知发送器！</string>
+    <string name="popup_time">弹出时间：</string>
+    <string name="popup_time_after_class">下课后</string>
+    <string name="popup_time_default">取决于客户端</string>
+    <string name="popup_time_forced">强制立即弹出</string>
+    <string name="popup_time_figured">选择时间</string>
+    <string name="popup_time_invisible">不弹出</string>
+    <string name="message_textbox_hint">在此处输入消息内容</string>
+</resources>
