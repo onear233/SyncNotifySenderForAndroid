@@ -1,11 +1,16 @@
 <resources>
     <string name="app_name">SyncNotifySender</string>
     <string name="welcome">欢迎使用同步通知发送器！</string>
+    <string name="last_update_time">上次更新时间:2024年6月10日</string>
+    <string name="notice">虽然本软件已经经过了数百次测试和超过半年的使用，但仍不保证消息一定能送达，可能由于网络问题/客户端没开机/软件bug导致消息未能弹出！本软件开发者不对造成的任何损失承担责任！使用即代表您知晓并同意以上条款。</string>
     <string name="popup_time">弹出时间：</string>
     <string name="popup_time_after_class">下课后</string>
     <string name="popup_time_default">取决于客户端</string>
     <string name="popup_time_forced">强制立即弹出</string>
     <string name="popup_time_figured">选择时间</string>
+    <string name="popup_option">消息选项</string>
+    <string name="popup_option_sound">声音提醒</string>
+    <string name="popup_option_fullscreen">全屏提醒（非必要不建议使用）</string>
     <string name="popup_time_invisible">不弹出</string>
     <string name="message_textbox_hint">在此处输入消息内容</string>
 </resources>
