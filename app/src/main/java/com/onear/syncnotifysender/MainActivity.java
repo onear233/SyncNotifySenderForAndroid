@@ -1,29 +1,38 @@
 package com.onear.syncnotifysender;
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.icu.util.Calendar;
 import android.net.Uri;
-import android.provider.MediaStore;
+import android.os.Looper;
 import android.view.View;
 import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import androidx.core.content.FileProvider;
+import androidx.viewpager.widget.PagerAdapter;
+import androidx.viewpager2.widget.ViewPager2;
+
+import com.chaychan.library.BottomBarLayout;
+import com.chaychan.library.TabData;
 import com.google.android.material.color.DynamicColors;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import org.json.JSONArray;
+import com.onear.syncnotifysender.Utils.UpdateUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.text.SimpleDateFormat;
+import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements Runnable {
 
     private FloatingActionButton actionButton;
     private RadioGroup radioGroup;
@@ -32,6 +41,9 @@ public class MainActivity extends AppCompatActivity {
     private int displayMode;
     private String currentMessageFileLocation;
     private StringBuilder sb = new StringBuilder();
+    private CheckBox popupSound;
+    private CheckBox popupFullscreen;
+    final String updateJsonURI = "https://githubraw.com/onear233/SyncNotifySenderForAndroid/master/UpdateInfromation.json";
     /**
      *             DEFAULT, //0
      *             INVISIBLE, //1
@@ -39,16 +51,34 @@ public class MainActivity extends AppCompatActivity {
      *             AFTERCLASS, //3
      *             FIGURED, //4
      **/
-    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd-hh-mm-ss");
+    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
 //    String nowTime = simpleDateFormat.format(new Date().getTime());
     //获取日历的一个实例，里面包含了当前的年月日
     Calendar calendar = Calendar.getInstance();
+
+
+
+
+
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
+
+//        UpdateUtils updateUtils = new UpdateUtils();
+//        Intent intent = updateUtils.getUpdateIntent(updateJsonURI);
+//        if(intent != null){
+//            startActivity(intent);
+//        }else{
+//            Toast.makeText(this,"啥都木有", Toast.LENGTH_LONG).show();
+//        }
+
+
+        Thread updateThread = new Thread(this);
+        updateThread.start();
 
 
         //fab的事件实例
@@ -59,9 +89,28 @@ public class MainActivity extends AppCompatActivity {
         //文本框的实例
         messageEditor = findViewById(R.id.message_textbox);
 
+        //弹出声音的实例
+        popupSound = findViewById(R.id.popup_sound_checkbox);
+
+        //全屏提醒的实例
+        popupFullscreen = findViewById(R.id.popup_fullscreen);
 
         // apply dynamic color
         DynamicColors.applyToActivitiesIfAvailable(getApplication());
+
+
+//        BottomBarLayout mBottomBarLayout = findViewById(R.id.bbl);
+//        ViewPager2 viewPager2 = findViewById(R.id.vp_content);
+//
+//        mBottomBarLayout.setData(getTabData()); //设置数据源
+//        //和ViewPager2联动
+//        PagerAdapter myAdapter = new PagerAdapter(this);
+//        viewPager2.setAdapter(myAdapter);
+//
+//        mBottomBarLayout.setViewPager2(viewPager2);
+
+
+
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int i) {
@@ -76,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
                     case "取决于客户端":
                         displayMode = 0;
                         break;
-                    case "强制立即弹出":
+                    case "立即弹出":
                         displayMode = 2;
                         break;
                     case "选择时间":
@@ -106,6 +155,14 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
+
+
+        getUpdate();
+    }
+
+    private void getUpdate() {
+
     }
 
     private void openDateSelectDialog() {
@@ -113,12 +170,13 @@ public class MainActivity extends AppCompatActivity {
         //构建一个日期对话框，该对话框已经集成了日期选择器
         //DatePickerDialog的第二个构造参数指定了日期监听器
         DatePickerDialog dialog = new DatePickerDialog((Context) this, new DatePickerDialog.OnDateSetListener() {
+
             @Override
             public void onDateSet(DatePicker datePicker, int i, int i1, int i2) {
 //                sb.append(i).append("-").append(i1+1).append("-").append(i2);
                 calendar.set(java.util.Calendar.YEAR,i);
                 calendar.set(java.util.Calendar.MONTH,i1);
-                calendar.set(java.util.Calendar.DAY_OF_MONTH,i1);
+                calendar.set(java.util.Calendar.DAY_OF_MONTH,i2);
                 openTimeSetDialog();
             }
         },
@@ -126,16 +184,21 @@ public class MainActivity extends AppCompatActivity {
                 calendar.get(Calendar.YEAR),
                 calendar.get(Calendar.MONTH),
                 calendar.get(Calendar.DAY_OF_MONTH));
+
+        DatePicker dp = dialog.getDatePicker();
+        long mindate = System.currentTimeMillis() - 1000L;
+        dp.setMinDate(mindate);
         //把日期对话框显示在界面上
         dialog.show();
     }
 
     private void openTimeSetDialog() {
-        TimePickerDialog dialog=new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {
+        TimePickerDialog dialog =new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(TimePicker timePicker, int i, int i1) {
 //                sb.append("-").append(i).append("-").append(i1).append("-00");
-                calendar.set(calendar.HOUR,i);
+                
+                calendar.set(calendar.HOUR_OF_DAY,i);
                 calendar.set(calendar.MINUTE,i1);
                 calendar.set(calendar.SECOND,0);
             }
@@ -143,6 +206,8 @@ public class MainActivity extends AppCompatActivity {
                 calendar.get(Calendar.HOUR_OF_DAY),
                 calendar.get(Calendar.MINUTE),
                 true);//true表示使用二十四小时制
+
+
         //把时间对话框显示在界面上
         dialog.show();
 
@@ -156,9 +221,11 @@ public class MainActivity extends AppCompatActivity {
     // 指定发送的内容 (EXTRA_STREAM 对于文件 Uri )
         Uri uri = FileProvider.getUriForFile(this,this.getPackageName()+".fileprovider", jsonFile);
         sendIntent.putExtra(Intent.EXTRA_STREAM, uri);
+        sendIntent.setPackage("nutstore.android");
     // 指定发送内容的类型 (MIME type)
         sendIntent.setType("text/plain");
         startActivity(Intent.createChooser(sendIntent,"选择目标同步服务器软件"));
+        Toast.makeText(this,"请选择通知文件夹进行保存！",Toast.LENGTH_LONG);
     }
 
     private void createJson(String fileName,String messageContent,int displayMode) throws JSONException, IOException {
@@ -177,11 +244,13 @@ public class MainActivity extends AppCompatActivity {
         //display的子属性
         JSONObject display = new JSONObject();
         if (displayMode == 4){
-            display.put("fileDisplayTime", simpleDateFormat.format(calendar.getTime()).toString());
+            display.put("fileDisplayTime", simpleDateFormat.format(calendar.getTime()));
         }else{
             display.put("fileDisplayTime", "");
         }
         display.put("fileDisplayMode",displayMode);
+        display.put("sound", popupSound.isChecked() );
+        display.put("fullScreen", popupFullscreen.isChecked() );
 //        //实例化一个JSON数组
 //        JSONArray message = new JSONArray();
 //        //将course1添加到JSONArray，下标为0
@@ -196,4 +265,44 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    @Override
+    public void run() {
+        UpdateUtils updateUtils = new UpdateUtils();
+        Intent intent = updateUtils.getUpdateIntent(updateJsonURI);
+        if(intent != null){
+//            startActivity(intent);
+            Looper.prepare();
+            buildUpdateDialog(intent);
+            Looper.loop();
+        }else{
+//            Looper.prepare();
+//            Toast.makeText(this,"啥都木有", Toast.LENGTH_LONG).show();
+//            Looper.loop();
+        }
+    }
+
+    private void buildUpdateDialog(Intent intent) {
+        //声明对象
+        final AlertDialog dialog;
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(R.string.update_title);
+        builder.setMessage(R.string.update_description);
+        //添加确定按钮
+        builder.setPositiveButton("现在就更新！", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog,int which) {
+                startActivity(intent);
+            }
+        });
+        //添加取消按钮
+        builder.setNegativeButton("下次一定", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                Toast.makeText(MainActivity.this,"下次也不一定？", Toast.LENGTH_LONG).show();
+            }
+        });
+        dialog = builder.create();
+        dialog.show();
+    }
 }
