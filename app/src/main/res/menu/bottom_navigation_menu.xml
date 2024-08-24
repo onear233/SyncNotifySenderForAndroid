@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/navigation_send_box"
+        android:icon="@drawable/ic_send_box_foreground"
+        android:title="@string/title_send_box" />
+
+    <item
+        android:id="@+id/navigation_document"
+        android:icon="@drawable/ic_send_foreground"
+        android:title="@string/title_document" />
+
+    <item
+        android:id="@+id/navigation_settings"
+        android:icon="@drawable/ic_settings_foreground"
+        android:title="@string/title_settings" />
+
+</menu>

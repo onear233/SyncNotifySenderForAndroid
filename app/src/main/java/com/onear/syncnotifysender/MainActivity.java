@@ -14,11 +14,12 @@ import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import androidx.core.content.FileProvider;
-import androidx.viewpager.widget.PagerAdapter;
-import androidx.viewpager2.widget.ViewPager2;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+import androidx.navigation.ui.AppBarConfiguration;
+import androidx.navigation.ui.NavigationUI;
 
-import com.chaychan.library.BottomBarLayout;
-import com.chaychan.library.TabData;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.color.DynamicColors;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.onear.syncnotifysender.Utils.UpdateUtils;
@@ -27,10 +28,9 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.text.SimpleDateFormat;
-import java.util.List;
+import com.onear.syncnotifysender.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity implements Runnable {
 
@@ -55,6 +55,11 @@ public class MainActivity extends AppCompatActivity implements Runnable {
 //    String nowTime = simpleDateFormat.format(new Date().getTime());
     //获取日历的一个实例，里面包含了当前的年月日
     Calendar calendar = Calendar.getInstance();
+    private ActivityMainBinding binding;
+
+    // 底部导航
+    private BottomNavigationView bottomNavigationView;
+
 
 
 
@@ -64,8 +69,13 @@ public class MainActivity extends AppCompatActivity implements Runnable {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
+        BottomNavigationView navView = findViewById(R.id.nav_view);
+
+        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
+        NavigationUI.setupWithNavController(binding.navView, navController);
 
 
 //        UpdateUtils updateUtils = new UpdateUtils();

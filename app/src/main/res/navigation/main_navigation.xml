@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/navigation_main"
+    app:startDestination="@+id/navigation_send_box">
+
+    <fragment
+        android:id="@+id/navigation_send_box"
+        android:name="com.onear.syncnotifysender.ui.SendBox.SendBoxFragment"
+        android:label="@string/title_send_box"
+        tools:layout="@layout/fragment_send_box" />
+
+    <fragment
+        android:id="@+id/navigation_document"
+        android:name="com.onear.syncnotifysender.ui.Document.DocumentFragment"
+        android:label="@string/title_document"
+        tools:layout="@layout/fragment_document" />
+
+    <fragment
+        android:id="@+id/navigation_settings"
+        android:name="com.onear.syncnotifysender.ui.Settings.SettingsFragment"
+        android:label="@string/title_settings"
+        tools:layout="@layout/fragment_settings" />
+</navigation>
