@@ -1,9 +1,11 @@
 package com.onear.syncnotifysender;
 
 
+import android.net.Uri;
 
+import java.net.URL;
 
-public class UpdateInformation{
+public class UpdateInformation {
     public UpdateInformation() {
     }
 
@@ -11,14 +13,19 @@ public class UpdateInformation{
         this.internalVersion = internalVersion;
     }
 
-    public UpdateInformation(String targetURI) {
+    public UpdateInformation(Uri targetURI) {
         this.targetURI = targetURI;
+    }
+
+    public UpdateInformation(String updateLog) {
+        this.updateLog = updateLog;
     }
 
     public UpdateInformation(int internalVersion, String targetURI) {
         this.internalVersion = internalVersion;
-        this.targetURI = targetURI;
+        this.targetURI = Uri.parse(targetURI);
     }
+
 
     public void setInternalVersion(int internalVersion) {
         this.internalVersion = internalVersion;
@@ -30,14 +37,26 @@ public class UpdateInformation{
 
     private int internalVersion = 0;
 
-    public String getTargetURI() {
+    //更新日志属性设置
+    public String getUpdateLog() {
+        return updateLog;
+    }
+
+    public void setUpdateLog(String updateLog) {
+        this.updateLog = updateLog;
+    }
+
+    private String updateLog = "";
+
+
+    public Uri getTargetURI() {
         return targetURI;
     }
 
-    public void setTargetURI(String targetURI) {
+    public void setTargetURI(Uri targetURI) {
         this.targetURI = targetURI;
     }
 
-    private String targetURI;
+    private Uri targetURI;
 
 }

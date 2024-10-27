@@ -64,6 +64,7 @@
                     <RadioButton android:id="@+id/popup_time_after_class_radiobutton"
                                  android:layout_width="wrap_content"
                                  android:layout_height="wrap_content"
+                        android:enabled="false"
                                  android:text="@string/popup_time_after_class"/>
                     <RadioButton android:id="@+id/popup_time_default_radiobutton"
                             android:layout_width="wrap_content" android:layout_height="wrap_content"
